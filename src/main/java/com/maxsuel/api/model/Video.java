@@ -1,9 +1,6 @@
 package com.maxsuel.api.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Video {
@@ -11,6 +8,8 @@ public class Video {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne
+    private Categoria categoria;
     private String titulo;
     private String descricao;
     private String URL;
@@ -19,10 +18,11 @@ public class Video {
     public Video() {
     }
 
-    public Video(String titulo, String descricao, String URL) {
+    public Video(String titulo, String descricao, String URL, Categoria categoria) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.URL = URL;
+        this.categoria = categoria;
     }
 
     public Video(String titulo, String URL) {
@@ -60,6 +60,14 @@ public class Video {
 
     public void setURL(String URL) {
         this.URL = URL;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
 
     public void atualizar(String titulo, String descricao, String url) {

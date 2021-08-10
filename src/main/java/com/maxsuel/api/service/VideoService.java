@@ -4,7 +4,9 @@ import com.maxsuel.api.controller.dto.UpdatedVideoDto;
 import com.maxsuel.api.controller.dto.VideoDto;
 import com.maxsuel.api.controller.form.UpdateVideoForm;
 import com.maxsuel.api.controller.form.VideoForm;
+import com.maxsuel.api.model.Categoria;
 import com.maxsuel.api.model.Video;
+import com.maxsuel.api.repository.CategoriaRepository;
 import com.maxsuel.api.repository.VideoRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,9 +21,11 @@ import java.util.Optional;
 public class VideoService {
 
     private final VideoRepository videoRepository;
+    private final CategoriaRepository categoriaRepository;
 
-    public VideoService(VideoRepository videoRepository) {
+    public VideoService(VideoRepository videoRepository, CategoriaRepository categoriaRepository) {
         this.videoRepository = videoRepository;
+        this.categoriaRepository = categoriaRepository;
     }
 
     public ResponseEntity<List<VideoDto>> getAllVideos() {
@@ -35,7 +39,20 @@ public class VideoService {
 
     @Transactional
     public ResponseEntity<VideoDto> saveVideo(VideoForm videoForm, UriComponentsBuilder uriBuilder) {
-        Video video = videoForm.converter();
+        Video video = new Video();
+        video.setTitulo(videoForm.getTitulo());
+        video.setDescricao(videoForm.getDescricao());
+        video.setURL(videoForm.getUrl());
+
+        Optional<Categoria> categoria = categoriaRepository.findById(videoForm.getCategoriaId());
+
+        if (categoria.isPresent()){
+            video.setCategoria(categoria.get());
+        }else{
+            Optional<Categoria> auxCategoria = categoriaRepository.findById(1L);
+            auxCategoria.ifPresent(video::setCategoria);
+        }
+
         videoRepository.save(video);
 
         URI uri = uriBuilder.path("/videos/{id}").buildAndExpand(video.getId()).toUri();

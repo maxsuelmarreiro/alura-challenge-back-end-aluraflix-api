@@ -1,6 +1,5 @@
 package com.maxsuel.api.controller.form;
 
-import com.maxsuel.api.model.Video;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
 
@@ -15,6 +14,7 @@ public class VideoForm {
     private String descricao;
     @NotNull @NotEmpty @URL
     private String url;
+    private Long categoriaId;
 
     public String getTitulo() {
         return titulo;
@@ -40,7 +40,12 @@ public class VideoForm {
         this.url = url;
     }
 
-    public Video converter() {
-        return new Video(titulo, descricao, url);
+    public Long getCategoriaId() {
+        return categoriaId;
     }
+
+    public void setCategoriaId(Long categoriaId) {
+        this.categoriaId = categoriaId;
+    }
+
 }
